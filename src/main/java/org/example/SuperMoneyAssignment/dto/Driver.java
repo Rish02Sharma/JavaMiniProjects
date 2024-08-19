@@ -1,9 +1,8 @@
-package org.example;
+package org.example.SuperMoneyAssignment.dto;
 
-import org.example.dto.User;
-import org.example.service.SongsUniverseService;
-import org.example.service.UserDataService;
-import org.example.service.RecommendationService;
+import org.example.SuperMoneyAssignment.dto.service.SongsUniverseService;
+import org.example.SuperMoneyAssignment.dto.service.UserDataService;
+import org.example.SuperMoneyAssignment.dto.service.RecommendationService;
 
 import java.util.Map;
 import java.util.TreeMap;

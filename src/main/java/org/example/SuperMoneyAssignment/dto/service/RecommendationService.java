@@ -1,7 +1,7 @@
-package org.example.service;
+package org.example.SuperMoneyAssignment.dto.service;
 
-import org.example.dto.Song;
-import org.example.dto.User;
+import org.example.SuperMoneyAssignment.dto.Song;
+import org.example.SuperMoneyAssignment.dto.User;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

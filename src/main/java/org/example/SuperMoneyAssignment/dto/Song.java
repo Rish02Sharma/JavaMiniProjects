@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.SuperMoneyAssignment.dto;
 
 public class Song {
     private String name;
