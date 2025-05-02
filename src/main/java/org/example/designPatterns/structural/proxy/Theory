@@ -1,0 +1,56 @@
+The Proxy Design Pattern is a structural design pattern that provides a placeholder or surrogate for another object to control access to it.
+
+🧠 Concept
+A Proxy acts as a middleman:
+
+It controls access to the real object.
+
+It can add logic like lazy initialization, logging, access control, caching, remote communication, etc.
+
+✅ Real-World Analogy
+Imagine a credit card as a proxy for your bank account:
+
+You don’t give your bank account directly to the merchant.
+
+Instead, the credit card acts as an intermediary to validate and limit access.
+
+📌 Common Types of Proxy
+Type	Purpose
+Virtual Proxy	Lazy initialization (e.g., loading a big image)
+Protection Proxy	Access control (e.g., admin vs user)
+Remote Proxy	Represent objects in different JVMs/machines
+Caching Proxy	Cache results to avoid expensive operations
+Logging Proxy	Add logging functionality
+
+--------------------------------------------------------------------------------------------
+
+Spring boot AOP logic based on Proxy DP
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Around("execution(* com.example.demo.PaymentService.*(..))")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+
+        Object result = joinPoint.proceed(); // call the original method
+
+        long timeTaken = System.currentTimeMillis() - start;
+        System.out.println(joinPoint.getSignature() + " executed in " + timeTaken + "ms");
+
+        return result;
+    }
+}
+
+✅ What's Happening Under the Hood?
+Spring creates a proxy object of PaymentService at runtime:
+
+You inject PaymentService, but you're actually calling a proxy.
+
+This proxy wraps the real method with custom behavior (like logging).
+
+🧩 Notes
+Spring uses JDK dynamic proxies (if interface-based) or CGLIB proxies (if class-based).
+
+This is a perfect Proxy Design Pattern in action — Spring adds behavior without modifying the actual class.

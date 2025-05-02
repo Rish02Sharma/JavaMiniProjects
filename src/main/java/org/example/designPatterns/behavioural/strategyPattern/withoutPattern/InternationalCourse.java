@@ -1,0 +1,11 @@
+package org.example.designPatterns.behavioural.strategyPattern.withoutPattern;
+
+public class InternationalCourse implements Course{
+    @Override
+    public void getCourseFee() {
+        int fee = 100;
+        double tax = 0.28;
+
+        System.out.println("Course fee for Certificate: " + (fee+tax));
+    }
+}

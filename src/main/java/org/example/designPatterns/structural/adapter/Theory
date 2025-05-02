@@ -1,0 +1,16 @@
+🧠 Adapter Design Pattern – Overview
+🔧 Definition:
+The Adapter Pattern is a structural design pattern that allows objects with incompatible interfaces to work together.
+
+Think of it as a translator between two systems.
+
+📦 Real-Life Analogy:
+You have a USB-C port on your laptop, but your mouse uses a USB-A connector.
+You use an adapter to convert USB-A → USB-C.
+
+💡 Use Cases:
+Integrating legacy code with new APIs.
+
+Allowing two incompatible classes to work together.
+
+Reusing existing code without modifying it.

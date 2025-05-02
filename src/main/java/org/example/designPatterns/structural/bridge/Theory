@@ -1,0 +1,31 @@
+🧠 What is the Bridge Design Pattern?
+Bridge Pattern is a structural pattern that:
+
+Decouples abstraction from its implementation.
+
+Lets both evolve independently.
+
+📦 Real-World Analogy:
+A remote control (abstraction) can control different devices (implementations) — TV, Radio, Projector.
+The remote doesn’t care how the device works internally.
+
+✅ Key Concepts
+Component	Description
+Abstraction	High-level interface (e.g., RemoteControl)
+Implementor	Low-level interface (e.g., Device)
+RefinedAbstraction	Concrete abstraction (e.g., AdvancedRemote)
+ConcreteImplementor	Specific implementation (e.g., TV, Radio)
+
+🤔 Bridge vs Adapter Pattern
+Feature	Bridge Pattern	Adapter Pattern
+Purpose	Separate abstraction from implementation	Make incompatible interfaces compatible
+When to Use	Want flexibility to extend abstraction/impl	Already have 2 incompatible interfaces
+Design Time / Runtime	Design time	Mostly after implementation
+Direction	Build both sides together	Wrap existing object (usually one-sided)
+
+✅ Benefits of Bridge Pattern
+Open/Closed Principle: Add new Remotes or Devices without modifying existing code.
+
+Avoids class explosion: Avoids creating subclasses for every combination (e.g., TVRemote, RadioRemote).
+
+Separates abstraction from implementation.

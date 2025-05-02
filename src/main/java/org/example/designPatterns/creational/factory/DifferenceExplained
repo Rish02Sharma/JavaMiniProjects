@@ -1,0 +1,13 @@
+📊 Summary Table
+Feature 	            Factory  Method	                                 Abstract Factory
+Creates	                    One product                                 Multiple related products (product family)
+Design Mechanism	        Inheritance	                                Composition
+Use Case	                Let subclasses decide object type	         Ensure related objects are used together
+Flexibility	                Less flexible	                                More flexible with grouped object creation
+
+🧠 Real-world Example
+Factory Method:
+A Document Editor where each subclass (PDFEditor, WordEditor) creates its own Document.
+
+Abstract Factory:
+A UI Toolkit that creates UI components (Button, TextField, etc.) for Windows, macOS, Linux — ensuring consistency across all widgets of the same family.
