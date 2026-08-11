@@ -9,6 +9,7 @@ public class PalindromeString {
             return isPalindrome(++s, --e, newstr);
         }else {
             return false;
+            //commit
         }
     }
 
