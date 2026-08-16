@@ -11,6 +11,7 @@ public class MaxPossibleFrequency {
         for(int right=0;right<nums.length;right++){
             winSum+=nums[right]; //sum of elements inside the current window
             cost=(long)nums[right]*(right-left+1)-winSum;//key formulae
+
             while(cost>k){
                 // Window is too expensive i.e. our cost exceeds k operation, so
                 // Remove left element and shrink the window
