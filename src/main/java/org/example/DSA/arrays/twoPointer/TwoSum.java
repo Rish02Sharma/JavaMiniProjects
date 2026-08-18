@@ -1,4 +1,4 @@
-package org.example.DSA.arrays.SimpleTraversal;
+package org.example.DSA.arrays.twoPointer;
 
 public class TwoSum {
     public static int[] twoSum(int[] numbers, int target) {

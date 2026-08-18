@@ -1,4 +1,4 @@
-package org.example.DSA.arrays.SimpleTraversal;
+package org.example.DSA.arrays.twoPointer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
