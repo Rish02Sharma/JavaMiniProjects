@@ -34,6 +34,28 @@ public class BasicWorkingLL {
         return count;
     }
 
+    public static Node reverseLL(Node head){
+        Node temp = head;
+        Node prev = null;
+
+        while(temp!=null){
+            Node temp1 = temp.next;
+            temp.next = prev;
+            prev = temp;
+            temp=temp1;
+        }
+        return prev;
+    }
+
+    public static void printDLL(Node head){
+        System.out.println("Print Linked List");
+        Node temp = head;
+        while(temp!=null){
+            System.out.println(temp.val);
+            temp = temp.next;
+        }
+    }
+
     public static void main(String[] args){
         Node head = new Node(1);
         head.next = new Node(2);
@@ -46,5 +68,7 @@ public class BasicWorkingLL {
         Node newHead2 = deleteFromHead(newHead);
         int length = lengthOfLL(newHead2);
         System.out.println("Length of LL: " + length);
+
+        printDLL(reverseLL(newHead2));
     }
 }
