@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: java-mini-projects-service
+
+webhook:
+  security:
+    secret-key: test-secret-32-chars-long-minimum
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

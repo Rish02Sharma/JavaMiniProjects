@@ -1,0 +1,20 @@
+[ Customer System / CRM ]
+          │  POST /api/v1/webhooks/leads (X-Signature-256)
+          ▼
+[ Webhook Ingestion Controller ]
+  ├── 1. Capture Raw Payload (bytes) & Verify HMAC-SHA256 (Constant-Time)
+  ├── 2. Validate DTO Constraints (E.164, NotBlank, Future/Present Timestamps)
+  ├── 3. Populate MDC Context (Correlation ID, Customer ID)
+  └── 4. Atomic Ingestion Record (DB / Redis SETNX with IN_PROGRESS status)
+          │
+          ├── Return 202 Accepted immediately to caller (< 50ms)
+          ▼
+[ Asynchronous Worker / Queue Buffer (Virtual Threads / Executor) ]
+  ├── 5. Check Circuit Breaker & Rate Limiter
+  ├── 6. HTTP POST to Blue Machines Campaign API (with Exponential Backoff + Jitter)
+  └── 7. Update State to DISPATCHED or DEAD_LETTER
+          ▲
+          │ Call completes asynchronously minutes later
+[ Blue Machines Campaign Outcome Webhook ]
+  ├── 8. Ingest Outcome Callback (handle out-of-order arrival via state machine)
+  └── 9. Sync disposition back to Customer CRM API
