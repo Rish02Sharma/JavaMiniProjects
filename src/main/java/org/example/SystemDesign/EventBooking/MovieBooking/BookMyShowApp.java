@@ -35,23 +35,23 @@ public class BookMyShowApp {
         Theater theaterINOX = new Theater("Inox GT", Theater.City.JAIPUR);
         Theater theaterPVR = new Theater("PVR CP", Theater.City.DELHI);
 
-        Show morningIX = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 9, 30), createSeats());
-        Show afternoonIX = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 15, 30), createSeats());
-        Show nightIX = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 21, 30), createSeats());
+        Show morningIX = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 9, 30), createSeats());
+        Show afternoonIX = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 15, 30), createSeats());
+        Show nightIX = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 21, 30), createSeats());
 
-        Show morningIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 9, 30), createSeats());
-        Show afternoonIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 15, 30), createSeats());
-        Show nightIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 21, 30), createSeats());
+        Show morningIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 9, 30), createSeats());
+        Show afternoonIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 15, 30), createSeats());
+        Show nightIX2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 21, 30), createSeats());
 
         theaterINOX.setShowList(List.of(morningIX, afternoonIX, nightIX, morningIX2, afternoonIX2, nightIX2));
 
-        Show morningPv = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 9, 30), createSeats());
-        Show noonPv = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 15, 30), createSeats());
-        Show nightPv = new Show(baahubali, LocalDateTime.of(2026, 9, 28, 21, 30), createSeats());
+        Show morningPv = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 9, 30), createSeats());
+        Show noonPv = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 15, 30), createSeats());
+        Show nightPv = new Show(baahubali, LocalDateTime.of(2026, 9, 30, 21, 30), createSeats());
 
-        Show morningPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 9, 30), createSeats());
-        Show noonPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 15, 30), createSeats());
-        Show nightPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 28, 21, 30), createSeats());
+        Show morningPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 9, 30), createSeats());
+        Show noonPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 15, 30), createSeats());
+        Show nightPv2 = new Show(avengers, LocalDateTime.of(2026, 9, 30, 21, 30), createSeats());
 
         theaterPVR.setShowList(List.of(morningPv, noonPv, nightPv, morningPv2, noonPv2, nightPv2));
 
