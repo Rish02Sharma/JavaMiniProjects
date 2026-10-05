@@ -1,4 +1,4 @@
-package org.example.SuperMoneyAssignment.dto;
+package org.example.assesments.SuperMoneyAssignment.dto;
 
 import java.util.List;
 

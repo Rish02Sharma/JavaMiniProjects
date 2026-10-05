@@ -1,46 +1,77 @@
 package org.example.SystemDesign.CarRental.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.time.LocalDate;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Getter
-@Setter
 public class Reservation {
-    UUID id;
-    LocalDateTime bookingStart;
-    LocalDateTime bookingEnd;
-    UUID vehicleId;
-    UUID userId;
-    ReservationType reservationType;
-    ReservationStatus reservationStatus;
 
-    public enum ReservationType{
-        HOURLY,
-        DAILY
+    private final int reservationId;
+    private final int vehicleId;
+    private final int userId;
+    private final LocalDate dateBookedFrom;
+    private final LocalDate dateBookedTo;
+    private final ReservationType reservationType;
+    private ReservationStatus reservationStatus;
+
+    public Reservation(int reservationId,
+                       int vehicleId,
+                       int userId,
+                       LocalDate dateBookedFrom,
+                       LocalDate dateBookedTo,
+                       ReservationType reservationType) {
+
+        this.reservationId = reservationId;
+        this.vehicleId = vehicleId;
+        this.userId = userId;
+        this.dateBookedFrom = dateBookedFrom;
+        this.dateBookedTo = dateBookedTo;
+        this.reservationType = reservationType;
+        this.reservationStatus = ReservationStatus.SCHEDULED;
     }
 
-    public enum ReservationStatus{
+    // ----------------- Getters / Setters -----------------
+
+    public int getReservationId() {
+        return reservationId;
+    }
+
+    public int getVehicleId() {
+        return vehicleId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public LocalDate getDateBookedFrom() {
+        return dateBookedFrom;
+    }
+
+    public LocalDate getDateBookedTo() {
+        return dateBookedTo;
+    }
+
+    public ReservationType getReservationType() {
+        return reservationType;
+    }
+
+    public ReservationStatus getReservationStatus() {
+        return reservationStatus;
+    }
+
+    public void setReservationStatus(ReservationStatus reservationStatus) {
+        this.reservationStatus = reservationStatus;
+    }
+
+    public enum ReservationStatus {
         SCHEDULED,
         IN_USE,
         COMPLETED,
         CANCELLED
     }
 
-    public Reservation(UUID vehicleId,
-                       UUID userId,
-                       LocalDateTime dateBookedFrom,
-                       LocalDateTime dateBookedTo,
-                       ReservationType reservationType) {
-
-        this.id = UUID.randomUUID();
-        this.vehicleId = vehicleId;
-        this.userId = userId;
-        this.bookingStart = dateBookedFrom;
-        this.bookingEnd = dateBookedTo;
-        this.reservationType = reservationType;
-        this.reservationStatus = ReservationStatus.SCHEDULED;
+    public enum ReservationType {
+        HOURLY,
+        DAILY
     }
 }

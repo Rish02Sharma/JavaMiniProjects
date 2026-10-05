@@ -1,28 +1,72 @@
 package org.example.SystemDesign.CarRental.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.UUID;
-
-@Getter
-@Setter
 public class Vehicle {
-    UUID id;
-    String vehicleNumber;
-    long dailyRentalCost;
-    long hourlyRentalCost;
-    VehicleType vehicleType;
-    VehicleStatus vehicleStatus;
 
-    public enum VehicleStatus{
+    private final int vehicleID;
+    private final String vehicleNumber;
+    private final VehicleType vehicleType;
+    private double dailyRentalCost;
+    private volatile VehicleStatus vehicleStatus;
+
+    /* we can add more properties like below if required
+        private String companyName;
+        private String modelName;
+        private int kmDriven;
+        private int average;
+        private int cc;
+        private int noOfSeat;
+    */
+
+    // --------- Constructors ---------
+    public Vehicle(int vehicleID, String vehicleNumber, VehicleType vehicleType) {
+        this.vehicleID = vehicleID;
+        this.vehicleNumber = vehicleNumber;
+        this.vehicleType = vehicleType;
+        this.vehicleStatus = VehicleStatus.AVAILABLE;
+    }
+
+
+    // --------- Getters ---------
+
+    public int getVehicleID() {
+        return vehicleID;
+    }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public VehicleStatus getVehicleStatus() {
+        return vehicleStatus;
+    }
+
+    public double getDailyRentalCost() {
+        return dailyRentalCost;
+    }
+
+    public String getVehicleNumber() {
+        return vehicleNumber;
+    }
+
+    // --------- Setters ---------
+
+    public void setDailyRentalCost(double dailyRentalCost) {
+        this.dailyRentalCost = dailyRentalCost;
+    }
+
+
+    public void setStatus(VehicleStatus vehicleStatus) {
+        this.vehicleStatus = vehicleStatus;
+    }
+
+    public enum VehicleType {
+        FOUR_WHEELER,
+        TWO_WHEELER
+    }
+
+    public enum VehicleStatus {
         AVAILABLE,
         BOOKED,
         MAINTENANCE
-    }
-
-    public enum VehicleType{
-        FOUR_WHEELER,
-        TWO_WHEELER
     }
 }

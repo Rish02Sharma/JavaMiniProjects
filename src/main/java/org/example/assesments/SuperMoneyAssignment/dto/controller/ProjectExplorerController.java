@@ -1,10 +1,9 @@
-package org.example.controller;
+package org.example.assesments.SuperMoneyAssignment.dto.controller;
 
-import org.example.SuperMoneyAssignment.dto.Song;
-import org.example.SuperMoneyAssignment.dto.User;
-import org.example.SuperMoneyAssignment.dto.service.RecommendationService;
-import org.example.SuperMoneyAssignment.dto.service.SongsUniverseService;
-import org.example.SuperMoneyAssignment.dto.service.UserDataService;
+import org.example.assesments.SuperMoneyAssignment.dto.User;
+import org.example.assesments.SuperMoneyAssignment.dto.service.RecommendationService;
+import org.example.assesments.SuperMoneyAssignment.dto.service.SongsUniverseService;
+import org.example.assesments.SuperMoneyAssignment.dto.service.UserDataService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

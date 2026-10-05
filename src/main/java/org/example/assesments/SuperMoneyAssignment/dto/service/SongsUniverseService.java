@@ -1,6 +1,6 @@
-package org.example.SuperMoneyAssignment.dto.service;
+package org.example.assesments.SuperMoneyAssignment.dto.service;
 
-import org.example.SuperMoneyAssignment.dto.Song;
+import org.example.assesments.SuperMoneyAssignment.dto.Song;
 
 import java.util.ArrayList;
 import java.util.List;
