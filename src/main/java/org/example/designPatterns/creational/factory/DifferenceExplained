@@ -1,13 +1,100 @@
-📊 Summary Table
-Feature 	            Factory  Method	                                 Abstract Factory
-Creates	                    One product                                 Multiple related products (product family)
-Design Mechanism	        Inheritance	                                Composition
-Use Case	                Let subclasses decide object type	         Ensure related objects are used together
-Flexibility	                Less flexible	                                More flexible with grouped object creation
+# 🏭 Factory Method vs. Abstract Factory Pattern
 
-🧠 Real-world Example
-Factory Method:
-A Document Editor where each subclass (PDFEditor, WordEditor) creates its own Document.
+## 📊 Summary Comparison
 
-Abstract Factory:
-A UI Toolkit that creates UI components (Button, TextField, etc.) for Windows, macOS, Linux — ensuring consistency across all widgets of the same family.
+| Feature                     | Factory Method Pattern                                        | Abstract Factory Pattern                                               |
+| :-------------------------- | :------------------------------------------------------------ | :--------------------------------------------------------------------- |
+| **Primary Intent**          | Creates **one product**; subclasses decide exact class        | Creates **families of related products** without specifying classes    |
+| **Core Mechanism**          | **Inheritance** (Subclasses override factory method)          | **Composition / Object Delegation** (Factory injected into client)     |
+| **Method Signature**        | Single creation method (e.g. `createButton()`)                | Multiple creation methods per family (`createButton()`, `createCheckbox()`) |
+| **Product Scope**           | Single product hierarchy (`Button`)                           | Multiple product hierarchies (`Button`, `Checkbox`, `TextField`)       |
+| **Coupling**                | Tied to Creator inheritance hierarchy                         | Decoupled via interface; factory object passed into client             |
+| **Consistency Enforcement** | N/A (creates one object at a time)                            | **Guaranteed**: Products from the same family are always paired together|
+| **Adding New Product Types**| Simple: Add a new subclass of Creator                         | Hard: Requires changing `GUIFactory` interface and all implementations  |
+| **Adding New Variants**     | Easy: Add a new Creator subclass returning the new Product    | Easy: Add a new Concrete Factory implementing `GUIFactory`             |
+
+---
+
+## 🏗️ Architectural Structures
+
+### 1. Factory Method (Inheritance-Driven)
+```text
+           +--------------------+
+           |       Dialog       |  <-- Creator (contains business logic)
+           |--------------------|
+           | +renderWindow()    |
+           | #createButton() *  |  <-- Factory Method (abstract)
+           +---------^----------+
+                     |
+       +-------------+-------------+
+       |                           |
++-----------------+       +-----------------+
+|  WindowsDialog  |       |   LinuxDialog   |  <-- Concrete Creators
+|-----------------|       |-----------------|
+| +createButton() |       | +createButton() |
++--------+--------+       +--------+--------+
+         | (creates)               | (creates)
+         v                         v
++-----------------+       +-----------------+
+|  WindowsButton  |       |   LinuxButton   |  <-- Concrete Products
++--------^--------+       +--------^--------+
+         |                         |
+         +-------------+-----------+
+                       | (implements)
+               +-------+--------+
+               |     Button     |  <-- Product Interface
+               +----------------+
+```
+
+### 2. Abstract Factory (Composition-Driven)
+```text
+         +---------------------------------------+
+         |              <<interface>>            |
+         |               GUIFactory              |  <-- Abstract Factory
+         |---------------------------------------|
+         | +createButton(): Button               |
+         | +createCheckbox(): Checkbox           |
+         +-------------------+-------------------+
+                             ^
+               +-------------+-------------+
+               |                           |
+     +-------------------+       +-------------------+
+     |  WindowsFactory   |       |    MacFactory     |  <-- Concrete Factories
+     +---------+---------+       +---------+---------+
+               | (creates family)          | (creates family)
+         +-----+-----+               +-----+-----+
+         |           |               |           |
+         v           v               v           v
+    [WinButton] [WinCheckbox]   [MacButton] [MacCheckbox]
+         |           |               |           |
+         |           +-------+-------+           |
+         |                   |                   |
+         v                   v                   v
+     <<Button>>        <<Checkbox>>          <<Button>>
+```
+
+---
+
+## 🧠 Real-World Examples
+
+### Factory Method:
+- **Document / Report Generators:** An abstract `ReportGenerator` has business logic `generateReport()`, deferring `createReportDocument()` to `PdfReportGenerator` or `ExcelReportGenerator`.
+- **Payment Processing:** An abstract `PaymentProcessor` has `processTransaction()`, delegating `createPaymentGateway()` to `StripePaymentProcessor` or `PayPalPaymentProcessor`.
+
+### Abstract Factory:
+- **Cross-Platform UI Frameworks:** Creating coordinated UI controls (Buttons, TextBoxes, Scrollbars) that match OS look-and-feel (e.g., Windows 11 Fluent vs. macOS Aqua vs. Linux GTK).
+- **Database Connector Toolkits:** Creating coordinated suites of database tools (Connection, Command, Transaction, Reader) for MySQL, PostgreSQL, or Oracle.
+
+---
+
+## 💡 When to Choose Which?
+
+- Choose **Factory Method** when:
+  - You don't know ahead of time the exact types and dependencies of the single object your code should work with.
+  - You want to provide users of your library/framework with a way to extend its internal components via inheritance.
+  - You want to save system resources by reusing existing objects instead of rebuilding them each time.
+
+- Choose **Abstract Factory** when:
+  - Your system must be independent of how its products are created, composed, and represented.
+  - Your system needs to be configured with one of multiple families of products.
+  - A family of related product objects is designed to be used together, and you need to enforce this constraint.
