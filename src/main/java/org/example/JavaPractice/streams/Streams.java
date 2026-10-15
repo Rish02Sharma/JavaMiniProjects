@@ -189,5 +189,10 @@ public class Streams {
 //// 10. Nth highest element (n = 3)
 //        nums.stream().distinct().sorted(Comparator.reverseOrder()).skip(2).findFirst();
 
+
+        // Word with highest length
+        String str = "I am learning streams in JAVA";
+        String word = Stream.of(str.split(" ")).reduce((s1, s2) -> s1.length() > s2.length()?s1:s2).get();
+        System.out.print("Longest word " + word);
     }
 }
