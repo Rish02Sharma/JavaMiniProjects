@@ -4,7 +4,6 @@ public class HouseRobbery {
 
         public static int maxAmount(int[] arr){
             int [] sol = new int[arr.length+3];
-            int len=arr.length;
             int maxA = 0;
             for(int i=arr.length-1; i>=0; i--){
                 sol[i] = arr[i] + Math.max(sol[i+2], sol[i+3]);
