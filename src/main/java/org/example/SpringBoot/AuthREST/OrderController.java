@@ -14,7 +14,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 class OrderController {
 
-    private final DependencyInversionPrincipleNotes.OrderService service;
+    private final OrderService service;
 
     @PostMapping
     ResponseEntity<OrderResponse> create(@Valid @RequestBody CreateOrderRequest req) {
@@ -29,9 +29,11 @@ class OrderController {
     }
 
     @GetMapping
-    Page<OrderResponse> list(@RequestParam(defaultValue = "0") int page,
+    ResponseEntity<OrderResponse> list(@RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "20") int size) {
-        return service.list(PageRequest.of(page, size, Sort.by("id").descending()));
+//        return service.get(PageRequest.of(page, size, Sort.by("id").descending()));
+
+        return null;
     }
 
     @DeleteMapping("/{id}")
