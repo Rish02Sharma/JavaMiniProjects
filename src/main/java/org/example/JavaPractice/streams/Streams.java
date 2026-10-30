@@ -3,6 +3,7 @@ package org.example.JavaPractice.streams;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -39,10 +40,10 @@ public class Streams {
                 .collect(Collectors.toList());
 
         System.out.print("Max three ");
-        maxThree.forEach(v -> System.out.print(v));
+        maxThree.forEach(v -> System.out.println(v));
 
         System.out.print("Min three ");
-        minThree.forEach(v -> System.out.print(v));
+        minThree.forEach(v -> System.out.println(v));
 
         //      WAYS TO CREATE STREAMS
 //        list.stream();                       // from collection
@@ -60,6 +61,35 @@ public class Streams {
                 new Employee("Karan", "HR",      65000, 35),
                 new Employee("Sita",  "Finance", 80000, 45)
         );
+
+//        Find the second-highest salary in each department.
+        Map<String, Optional<Employee>> second = emps.stream().collect(
+                Collectors.groupingBy(Employee::dept,
+                        Collectors.collectingAndThen(Collectors.toList(), l -> l.stream()
+                                .sorted(Comparator.comparingDouble(Employee::salary).reversed())
+                                .skip(1).findFirst())));
+
+
+
+//        Get the names of employees per department as a single comma-separated string.
+        Map<String, String> joiningExp = emps.stream()
+                .collect(Collectors.groupingBy(Employee::dept, Collectors.mapping(Employee::name,
+                        Collectors.joining( ","))));
+
+        Map<String, Double> avg1 = emps.stream().collect(
+                Collectors.groupingBy(Employee::dept, TreeMap::new,
+                        Collectors.averagingDouble(Employee::salary)));
+
+        System.out.println("Sorted by department name: " + avg1);
+
+
+//        Write a custom collector that gathers elements into an immutable list.
+        Collector<String, List<String>, List<String>> toImmutable = Collector.of(
+                ArrayList::new,
+                List::add,
+                (l, r) -> { l.addAll(r); return l; },
+                Collections::unmodifiableList);
+
 
         List<String> r = emps.stream()               // source
                 .filter(e -> e.salary() > 60000)              // intermediate
