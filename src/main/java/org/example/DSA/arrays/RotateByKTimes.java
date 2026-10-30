@@ -5,6 +5,8 @@ import java.util.Arrays;
 public class RotateByKTimes {
 
 
+    // MEDIUM SOLUTION N*K times
+
     public static void rotateByKTimes(int[] arr){
         int s=1;
         int e= arr.length-1;
@@ -19,6 +21,10 @@ public class RotateByKTimes {
 
         arr[0]=prev;
     }
+
+
+
+    //// OPTIMISED SOLUTION
 
     public static void rotate(int[] nums, int k) {
         k %= nums.length;
