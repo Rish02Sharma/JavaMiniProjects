@@ -1,6 +1,8 @@
 package org.example.DSA.arrays.twoPointer;
 
 public class TwoSum {
+
+    // Two pointer approach works when array is sorted
     public static int[] twoSum(int[] numbers, int target) {
         int i=0, j=numbers.length-1;
         int[] output = new int[2];

@@ -6,6 +6,9 @@ import java.util.List;
 
 public class ThreeSum {
 
+    // Its done using a combination of Sorting and two sum technique thus O(nLog(N)) + O(N^2)
+    // is the time complexity of this solution thus Time Complexity = O(n^2)
+
     public static List<List<Integer>> threeSum(int[] arr, int tar){
         List<List<Integer>> out = new ArrayList<>();
         Arrays.sort(arr);
