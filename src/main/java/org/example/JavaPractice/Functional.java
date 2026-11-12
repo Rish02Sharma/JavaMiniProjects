@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * =============================================================================================
@@ -28,7 +30,11 @@ import java.util.stream.IntStream;
  * 11. Lazy Evaluation & Function Memoization (Caching)
  * 12. Monadic Programming with Optional
  * 13. Functional Design Patterns & Railway-Oriented Error Handling (Result / Either)
- * 14. Under the Hood (JVM invokedynamic) & FP Best Practices
+ * 14. Tail Recursion & The Trampoline Pattern (Solving StackOverflow in Java)
+ * 15. Algebraic Data Types (ADTs) & Java 21 Functional Pattern Matching
+ * 16. Asynchronous Functional Composition with CompletableFuture
+ * 17. Real-World FP Practice Problems & Interview Pearls
+ * 18. Under the Hood (JVM invokedynamic) & FP Best Practices
  * =============================================================================================
  */
 public class Functional {
@@ -38,6 +44,7 @@ public class Functional {
     // -----------------------------------------------------------------------------------------
     public record Person(String name, int age) {}
     public record Employee(String name, String department, double salary) {}
+    public record Product(String id, String name, String category, double price, boolean inStock) {}
 
     // -----------------------------------------------------------------------------------------
     // 1. CUSTOM FUNCTIONAL INTERFACE DEFINITION & ANATOMY
@@ -108,7 +115,11 @@ public class Functional {
         section11_LazyEvaluationAndMemoization();
         section12_MonadicOptionalProgramming();
         section13_FunctionalPatternsAndResultEither();
-        section14_UnderTheHoodAndBestPractices();
+        section14_TailRecursionAndTrampoline();
+        section15_AlgebraicDataTypesAndPatternMatching();
+        section16_AsyncFunctionalCompletableFuture();
+        section17_RealWorldFPChallenges();
+        section18_UnderTheHoodAndBestPractices();
 
         System.out.println("\n===================================================================");
         System.out.println("              ALL FUNCTIONAL PROGRAMMING LESSONS COMPLETE!         ");
@@ -574,16 +585,7 @@ public class Functional {
 
         List<String> classNames = List.of("java.lang.String", "java.util.List", "non.existent.Class");
 
-        // The ugly way: try-catch inside lambda
-        // classNames.forEach(cn -> {
-        //     try {
-        //         Class.forName(cn);
-        //     } catch (ClassNotFoundException e) {
-        //         throw new RuntimeException(e);
-        //     }
-        // });
-
-        // The clean Functional way: using our unchecked wrapper function
+        // Clean Functional way using mapMulti:
         List<Class<?>> loadedClasses = classNames.stream()
                 .<Class<?>>mapMulti((className, consumer) -> {
                     try {
@@ -595,7 +597,7 @@ public class Functional {
                 .toList();
         System.out.println("Loaded classes via mapMulti: " + loadedClasses);
 
-        // Demonstrating our generic unchecked() helper function:
+        // Demonstrating our generic uncheck() helper function:
         Function<String, Class<?>> safeLoader = uncheck(Class::forName);
         try {
             Class<?> stringClass = safeLoader.apply("java.lang.String");
@@ -703,9 +705,6 @@ public class Functional {
          * In Java, Suppliers model lazy values: () -> expensiveOperation()
          */
         boolean debugEnabled = false;
-        // Eager evaluation (BAD): computeExpensiveDiagnostic() always runs even if debug is disabled!
-        // logDebug(computeExpensiveDiagnostic());
-
         // Lazy evaluation (GOOD): Computes ONLY if needed
         logDebugLazily(debugEnabled, () -> {
             System.out.println("   [Expensive diagnostic computation running...]");
@@ -902,10 +901,224 @@ public class Functional {
     }
 
     // =========================================================================================
-    // SECTION 14: UNDER THE HOOD & FP BEST PRACTICES
+    // SECTION 14: TAIL RECURSION & THE TRAMPOLINE PATTERN
     // =========================================================================================
-    private static void section14_UnderTheHoodAndBestPractices() {
-        printHeader("14. UNDER THE HOOD (JVM invokedynamic) & BEST PRACTICES");
+    /**
+     * The Trampoline Pattern:
+     * Problem: In functional programming, loops are often replaced by recursion. However,
+     * the JVM does NOT automatically optimize tail-calls (TCO). A deep recursion (e.g. 10,000+
+     * calls) throws a StackOverflowError!
+     * 
+     * Solution: A Trampoline turns tail-recursive algorithms into iterative loops on the HEAP
+     * using lazy Supplier evaluation, achieving infinite recursion depth with constant stack space!
+     */
+    @FunctionalInterface
+    public interface Trampoline<T> {
+        Trampoline<T> bounce();
+
+        default boolean isComplete() {
+            return false;
+        }
+
+        default T result() {
+            throw new UnsupportedOperationException("Computation not yet complete");
+        }
+
+        default T run() {
+            Trampoline<T> current = this;
+            while (!current.isComplete()) {
+                current = current.bounce();
+            }
+            return current.result();
+        }
+
+        static <T> Trampoline<T> done(T result) {
+            return new Trampoline<>() {
+                @Override public boolean isComplete() { return true; }
+                @Override public T result() { return result; }
+                @Override public Trampoline<T> bounce() { throw new UnsupportedOperationException(); }
+            };
+        }
+
+        static <T> Trampoline<T> more(Supplier<Trampoline<T>> next) {
+            return next::get;
+        }
+    }
+
+    private static Trampoline<Long> tailRecursiveSum(long n, long acc) {
+        if (n <= 0) {
+            return Trampoline.done(acc);
+        }
+        // Instead of directly calling tailRecursiveSum (which pushes a stack frame),
+        // we return a lazy bounce wrapped in a lambda Supplier!
+        return Trampoline.more(() -> tailRecursiveSum(n - 1, acc + n));
+    }
+
+    private static void section14_TailRecursionAndTrampoline() {
+        printHeader("14. TAIL RECURSION & THE TRAMPOLINE PATTERN");
+
+        System.out.println("Demonstrating 50,000 recursive steps without blowing the JVM call stack:");
+        long deepRecursionDepth = 50_000L;
+        long totalSum = tailRecursiveSum(deepRecursionDepth, 0).run();
+        System.out.println("Trampoline successfully summed 1.." + deepRecursionDepth + " = " + totalSum);
+        System.out.println("Notice: Constant stack frame depth maintained by iterative bouncing!");
+    }
+
+    // =========================================================================================
+    // SECTION 15: ALGEBRAIC DATA TYPES (ADTs) & JAVA 21 PATTERN MATCHING
+    // =========================================================================================
+    /**
+     * Algebraic Data Types (ADTs) in Functional Java:
+     *  - Product Types: Records (data defined by A AND B AND C)
+     *  - Sum Types: Sealed Interfaces (data defined by X OR Y OR Z)
+     * 
+     * Combining Sealed Hierarchies with Java 21 exhaustive pattern matching yields
+     * mathematical purity and eliminates runtime TypeCastExceptions.
+     */
+    public sealed interface Expression {
+        record Constant(double value) implements Expression {}
+        record Add(Expression left, Expression right) implements Expression {}
+        record Multiply(Expression left, Expression right) implements Expression {}
+        record Negate(Expression expr) implements Expression {}
+    }
+
+    public static double evaluateExpression(Expression expr) {
+        // Pure functional recursive pattern-matching evaluator:
+        return switch (expr) {
+            case Expression.Constant(double v) -> v;
+            case Expression.Add(var l, var r) -> evaluateExpression(l) + evaluateExpression(r);
+            case Expression.Multiply(var l, var r) -> evaluateExpression(l) * evaluateExpression(r);
+            case Expression.Negate(var inner) -> -evaluateExpression(inner);
+        };
+    }
+
+    private static void section15_AlgebraicDataTypesAndPatternMatching() {
+        printHeader("15. ALGEBRAIC DATA TYPES (ADTs) & JAVA 21 PATTERN MATCHING");
+
+        // Building expression: -( (5 + 3) * 2 ) = -16.0
+        Expression expr = new Expression.Negate(
+                new Expression.Multiply(
+                        new Expression.Add(new Expression.Constant(5), new Expression.Constant(3)),
+                        new Expression.Constant(2)
+                )
+        );
+
+        double evaluated = evaluateExpression(expr);
+        System.out.println("Evaluated AST Expression -( (5 + 3) * 2 ): " + evaluated);
+    }
+
+    // =========================================================================================
+    // SECTION 16: ASYNCHRONOUS FUNCTIONAL COMPOSITION WITH CompletableFuture
+    // =========================================================================================
+    private static void section16_AsyncFunctionalCompletableFuture() {
+        printHeader("16. ASYNCHRONOUS FUNCTIONAL PIPELINES (CompletableFuture as a Monad)");
+        /*
+         * CompletableFuture implements monadic concepts for asynchronous tasks:
+         *  - supplyAsync(Supplier):     Monadic unit/return (wraps async computation)
+         *  - thenApply(Function):       Functor map (transforms value once completed)
+         *  - thenCompose(Function->CF): Monad flatMap (chains dependent async calls)
+         *  - thenCombine(CF, BiFn):     Applicative zip (runs 2 futures in parallel and joins)
+         *  - exceptionally(Function):   Error recovery
+         */
+
+        CompletableFuture<String> asyncPipeline = CompletableFuture
+                .supplyAsync(() -> {
+                    // Step 1: Fetch order
+                    return "Order-9872";
+                })
+                .thenApply(String::toUpperCase) // Functor Map
+                .thenCompose(orderId -> CompletableFuture.supplyAsync(() -> {
+                    // Step 2: Dependent fetch of account details (Monad flatMap)
+                    return "Account(ID=ACC-44, " + orderId + ")";
+                }))
+                .thenCombine(
+                        CompletableFuture.supplyAsync(() -> 149.95), // Step 3: Run independent pricing in parallel
+                        (acc, price) -> acc + " -> Charge: $" + price // Step 4: Zip results together
+                )
+                .exceptionally(ex -> "Async pipeline fallback: " + ex.getMessage());
+
+        try {
+            String asyncResult = asyncPipeline.get(2, TimeUnit.SECONDS);
+            System.out.println("Async Monadic Pipeline Output: " + asyncResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // =========================================================================================
+    // SECTION 17: REAL-WORLD FP PRACTICE PROBLEMS & INTERVIEW PEARLS
+    // =========================================================================================
+    private static void section17_RealWorldFPChallenges() {
+        printHeader("17. REAL-WORLD FP PRACTICE PROBLEMS & INTERVIEW PEARLS");
+
+        // CHALLENGE 1: Dynamic Multi-Criteria Predicate Builder
+        // In real-world search APIs, users may or may not supply filters (category, minPrice, inStock).
+        // Using FP, we combine optional filters dynamically using reduce(Predicate::and)!
+        System.out.println("Challenge 1: Dynamic Predicate Filtering");
+        List<Product> catalog = List.of(
+                new Product("P1", "Laptop", "Electronics", 1200.0, true),
+                new Product("P2", "Phone", "Electronics", 800.0, false),
+                new Product("P3", "Desk", "Furniture", 250.0, true),
+                new Product("P4", "Monitor", "Electronics", 300.0, true)
+        );
+
+        // Active filter criteria from a search query (some may be null / empty):
+        String filterCategory = "Electronics";
+        Double filterMaxPrice = 1000.0;
+        Boolean filterOnlyInStock = true;
+
+        List<Predicate<Product>> filterChain = new ArrayList<>();
+        if (filterCategory != null) {
+            filterChain.add(p -> p.category().equalsIgnoreCase(filterCategory));
+        }
+        if (filterMaxPrice != null) {
+            filterChain.add(p -> p.price() <= filterMaxPrice);
+        }
+        if (filterOnlyInStock != null && filterOnlyInStock) {
+            filterChain.add(Product::inStock);
+        }
+
+        // Fold all predicates into one single predicate (or default to 'always true'):
+        Predicate<Product> compositeFilter = filterChain.stream()
+                .reduce(p -> true, Predicate::and);
+
+        List<Product> matchedProducts = catalog.stream().filter(compositeFilter).toList();
+        System.out.println("   Dynamically filtered products (Electronics, <=1000, inStock): " + matchedProducts);
+
+        // CHALLENGE 2: Word Frequency Counter (Pure FP with Collectors)
+        System.out.println("\nChallenge 2: Word Frequency Counter");
+        String text = "java streams and functional java programming with functional purity";
+        Map<String, Long> wordFrequencies = Arrays.stream(text.split("\\s+"))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println("   Word Frequencies: " + wordFrequencies);
+
+        // CHALLENGE 3: First Non-Repeating Character in a String
+        System.out.println("\nChallenge 3: First Non-Repeating Character");
+        String streamInput = "swiss";
+        Optional<Character> firstUnique = streamInput.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.groupingBy(Function.identity(), LinkedHashMap::new, Collectors.counting()))
+                .entrySet().stream()
+                .filter(e -> e.getValue() == 1L)
+                .map(Map.Entry::getKey)
+                .findFirst();
+        System.out.println("   First non-repeating character in '" + streamInput + "': " + firstUnique.orElse('?')); // 'w'
+
+        // CHALLENGE 4: Infinite Sequence Generation with Stream.iterate
+        System.out.println("\nChallenge 4: Infinite Sequences (Fibonacci Pairs)");
+        // Using an int pair [a, b] where next is [b, a + b]
+        List<Integer> fibonacciSeries = Stream.iterate(new int[]{0, 1}, pair -> new int[]{pair[1], pair[0] + pair[1]})
+                .limit(10)
+                .map(pair -> pair[0])
+                .toList();
+        System.out.println("   First 10 Fibonacci numbers generated functionally: " + fibonacciSeries);
+    }
+
+    // =========================================================================================
+    // SECTION 18: UNDER THE HOOD & FP BEST PRACTICES
+    // =========================================================================================
+    private static void section18_UnderTheHoodAndBestPractices() {
+        printHeader("18. UNDER THE HOOD (JVM invokedynamic) & BEST PRACTICES");
         /*
          * How Java Lambdas Work Under The Hood:
          * -------------------------------------
