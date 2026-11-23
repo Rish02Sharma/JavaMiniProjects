@@ -129,6 +129,7 @@ public class Streams {
 
         // 2. From Arrays:
         String[] arr = {"X", "Y", "Z"};
+        int[] arr2 = {1, 2, 3, 4};
         Stream<String> s2 = Arrays.stream(arr);
 
         // 3. From Direct Values (Stream.of):
